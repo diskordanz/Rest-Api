@@ -1,0 +1,17 @@
+version: '2'
+services:
+  db:    
+    image: db:latest
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres    
+    ports:
+    - "5555:5432"
+    container_name: db
+  api:
+    image: api:latest
+    ports:
+    - 8081:8080
+    container_name: api
+    links:
+    - db
