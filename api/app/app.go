@@ -44,9 +44,9 @@ func (a *App) setRouters() {
 	// Routing for handling the projects
 	a.Get("/books", a.GetAllBooks)
 	a.Post("/books", a.CreateBook)
-	a.Get("/books/{title}", a.GetBook)
-	a.Put("/books/{title}", a.UpdateBook)
-	a.Delete("/books/{title}", a.DeleteBook)
+	a.Get("/books/{id}", a.GetBook)
+	a.Put("/books/{id}", a.UpdateBook)
+	a.Delete("/books/{id}", a.DeleteBook)
 }
 
 // Get Wrap the router for GET method

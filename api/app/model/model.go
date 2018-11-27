@@ -5,7 +5,6 @@ import "github.com/jinzhu/gorm"
 // Book struct
 type Book struct {
 	gorm.Model
-	ID   uint   `gorm:"unique" json:"id"`
 	Name string `json:"name"`
 }
 
