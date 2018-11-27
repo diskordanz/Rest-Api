@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"rest-api/api/app/model"
 
@@ -9,10 +10,31 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func GetAllBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func GetFilterBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request, filterString string) {
+	name := fmt.Sprintf("%%%s%%", filterString)
 	var books []model.Book
-	db.Select("name").Find(&books)
-	respondJSON(w, http.StatusOK, &books)
+	if err := db.Where("name LIKE ?", name).Find(&books).Error; err != nil {
+		respondError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	respondJSON(w, http.StatusOK, books)
+
+}
+
+func GetAllBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	v := r.URL.Query()
+	filterString := v.Get("name")
+	var books []model.Book
+
+	if filterString != "" {
+		GetFilterBooks(db, w, r, filterString)
+		return
+	} else if err := db.Find(&books).Error; err != nil {
+		respondError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	respondJSON(w, http.StatusOK, books)
+
 }
 
 func GetBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -66,7 +88,10 @@ func UpdateBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 func DeleteBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var book model.Book
-
+	if err := db.First(&book, params["id"]).Error; err != nil {
+		respondError(w, http.StatusNotFound, err.Error())
+		return
+	}
 	if err := db.Delete(&book, params["id"]).Error; err != nil {
 		respondError(w, http.StatusInternalServerError, err.Error())
 		return

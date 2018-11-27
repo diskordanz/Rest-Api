@@ -49,6 +49,15 @@ func (a *App) setRouters() {
 	a.Delete("/books/{id}", a.DeleteBook)
 }
 
+// func (a *App) GetFilterBooks(w http.ResponseWriter, r *http.Request) {
+// 	handler.GetFilterBooks(a.DB, w, r)
+// }
+
+// // Get Wrap the router for GET method
+// func (a *App) Find(path string, f func(w http.ResponseWriter, r *http.Request)) {
+// 	a.Router.HandleFunc(path, f).Queries("name", "{name}").Methods("GET")
+// }
+
 // Get Wrap the router for GET method
 func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("GET")
@@ -74,22 +83,18 @@ func (a *App) GetAllBooks(w http.ResponseWriter, r *http.Request) {
 	handler.GetAllBooks(a.DB, w, r)
 }
 
-//CreateBook create
 func (a *App) CreateBook(w http.ResponseWriter, r *http.Request) {
 	handler.CreateBook(a.DB, w, r)
 }
 
-// GetBook get
 func (a *App) GetBook(w http.ResponseWriter, r *http.Request) {
 	handler.GetBook(a.DB, w, r)
 }
 
-//UpdateBook update
 func (a *App) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	handler.UpdateBook(a.DB, w, r)
 }
 
-//DeleteBook delete
 func (a *App) DeleteBook(w http.ResponseWriter, r *http.Request) {
 	handler.DeleteBook(a.DB, w, r)
 }
