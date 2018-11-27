@@ -1,8 +1,8 @@
 package main
 
 import (
-	"rest-api/api/app"
-	"rest-api/api/config"
+	"Rest-Api/api/app"
+	"Rest-Api/api/config"
 	"time"
 )
 

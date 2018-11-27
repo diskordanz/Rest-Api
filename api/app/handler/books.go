@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"Rest-Api/api/app/model"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"rest-api/api/app/model"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"

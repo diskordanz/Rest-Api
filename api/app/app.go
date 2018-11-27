@@ -1,12 +1,12 @@
 package app
 
 import (
+	"Rest-Api/api/app/handler"
+	"Rest-Api/api/app/model"
+	"Rest-Api/api/config"
 	"fmt"
 	"log"
 	"net/http"
-	"rest-api/api/app/handler"
-	"rest-api/api/app/model"
-	"rest-api/api/config"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
