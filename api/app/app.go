@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"rest-api/api/app/handler"
 	"rest-api/api/app/model"
-	"rest-api/api/config"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -18,9 +17,21 @@ type App struct {
 	Router *mux.Router
 	DB     *gorm.DB
 }
+type Config struct {
+	DB *DBConfig
+}
+
+type DBConfig struct {
+	Dialect  string
+	Username string
+	Password string
+	Name     string
+	Host     string
+	Port     string
+}
 
 // Initialize App initialize with predefined configuration
-func (a *App) Initialize(config *config.Config) {
+func (a *App) Initialize(config *Config) {
 
 	dbURI := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
 		config.DB.Host,
