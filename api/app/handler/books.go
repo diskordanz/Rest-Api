@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	model "github.com/diskordanz/rest-api/api/app/model"
+	"github.com/diskordanz/rest-api/api/app/model"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"

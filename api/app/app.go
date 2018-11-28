@@ -5,8 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	handler "github.com/diskordanz/rest-api/api/app/handler"
-	model "github.com/diskordanz/rest-api/api/app/model"
+	"github.com/diskordanz/rest-api/api/app/handler"
+	"github.com/diskordanz/rest-api/api/app/model"
+	"github.com/diskordanz/rest-api/api/config"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -18,21 +19,9 @@ type App struct {
 	Router *mux.Router
 	DB     *gorm.DB
 }
-type Config struct {
-	DB *DBConfig
-}
-
-type DBConfig struct {
-	Dialect  string
-	Username string
-	Password string
-	Name     string
-	Host     string
-	Port     string
-}
 
 // Initialize App initialize with predefined configuration
-func (a *App) Initialize(config *Config) {
+func (a *App) Initialize(config *config.Config) {
 
 	dbURI := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
 		config.DB.Host,
