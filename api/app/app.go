@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"rest-api/api/app/handler"
-	"rest-api/api/app/model"
+
+	handler "github.com/diskordanz/rest-api/api/app/handler"
+	model "github.com/diskordanz/rest-api/api/app/model"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"

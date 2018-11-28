@@ -2,28 +2,31 @@ package main
 
 import (
 	"os"
-	"rest-api/api/app"
 	"time"
+
+	app "github.com/diskordanz/rest-api/api/app"
+
+	_ "github.com/lib/pq"
 )
 
-var config app.Config
+var appl *app.App
 
 func main() {
-	time.Sleep(10 * time.Second)
-	app := &app.App{}
-	app.Initialize(&config)
-	app.Run(":8080")
+	appl.Run(":8080")
 }
 
 func init() {
-	config = app.Config{
-		DB: &app.DBConfig{
-			Dialect:  os.Getenv("DB_DIALECT"),
-			Username: os.Getenv("DB_USER"),
-			Password: os.Getenv("DB_PASSWORD"),
-			Name:     os.Getenv("DB_NAME"),
-			Host:     os.Getenv("DB_HOST"),
-			Port:     os.Getenv("DB_PORT"),
-		},
-	}
+	time.Sleep(10 * time.Second)
+
+	appl.Initialize(
+		&app.Config{
+			DB: &app.DBConfig{
+				Dialect:  os.Getenv("DB_DIALECT"),
+				Username: os.Getenv("DB_USER"),
+				Password: os.Getenv("DB_PASSWORD"),
+				Name:     os.Getenv("DB_NAME"),
+				Host:     os.Getenv("DB_HOST"),
+				Port:     os.Getenv("DB_PORT"),
+			},
+		})
 }

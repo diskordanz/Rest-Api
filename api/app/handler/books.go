@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"rest-api/api/app/model"
+
+	model "github.com/diskordanz/rest-api/api/app/model"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
