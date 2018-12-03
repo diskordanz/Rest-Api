@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/diskordanz/rest-api/api/app"
-	"github.com/diskordanz/rest-api/api/config"
+	"github.com/diskordanz/Rest-Api/api/app"
+	"github.com/diskordanz/Rest-Api/api/config"
 )
 
 var configuration *config.Config

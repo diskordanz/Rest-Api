@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/diskordanz/rest-api/api/app/handler"
-	"github.com/diskordanz/rest-api/api/app/model"
-	"github.com/diskordanz/rest-api/api/config"
+	"github.com/diskordanz/Rest-Api/api/app/handler"
+	"github.com/diskordanz/Rest-Api/api/app/model"
+	"github.com/diskordanz/Rest-Api/api/config"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
