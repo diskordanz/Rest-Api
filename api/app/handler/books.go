@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
-  
+//
 func GetFilterBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request, filterString string) {
 	name := fmt.Sprintf("%%%s%%", filterString)
 	var books []model.Book
