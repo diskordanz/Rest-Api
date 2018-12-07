@@ -14,13 +14,11 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// App has router and db instances
 type App struct {
 	Router *mux.Router
 	DB     *gorm.DB
 }
 
-// Initialize App initialize with predefined configuration
 func (a *App) Initialize(config *config.Config) {
 
 	dbURI := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
@@ -40,67 +38,79 @@ func (a *App) Initialize(config *config.Config) {
 	a.setRouters()
 }
 
-// Set all required routers
 func (a *App) setRouters() {
-	// Routing for handling the projects
-	a.Get("/books", a.GetAllBooks)
+	a.Get("/books", a.GetBooks)
 	a.Post("/books", a.CreateBook)
 	a.Get("/books/{id}", a.GetBook)
 	a.Put("/books/{id}", a.UpdateBook)
 	a.Delete("/books/{id}", a.DeleteBook)
+
+	a.Get("/authors", a.GetAuthors)
+	a.Post("/authors", a.CreateAuthor)
+	a.Get("/authors/{id}", a.GetAuthor)
+	a.Put("/authors/{id}", a.UpdateAuthor)
+	a.Delete("/authors/{id}", a.DeleteAuthor)
+
+	a.Get("/authors/{id_author}/books", a.GetBooksByAuthor)
+	a.Get("/authors/{id_author}/books/{id_book}", a.GetBookByAuthor)
 }
 
-// func (a *App) GetFilterBooks(w http.ResponseWriter, r *http.Request) {
-// 	handler.GetFilterBooks(a.DB, w, r)
-// }
+func (a *App) Run(host string) {
+	log.Fatal(http.ListenAndServe(host, a.Router))
+}
 
-// // Get Wrap the router for GET method
-// func (a *App) Find(path string, f func(w http.ResponseWriter, r *http.Request)) {
-// 	a.Router.HandleFunc(path, f).Queries("name", "{name}").Methods("GET")
-// }
 
-// Get Wrap the router for GET method
 func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("GET")
 }
-
-// Post Wrap the router for POST method
 func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("POST")
 }
-
-// Put Wrap the router for PUT method
 func (a *App) Put(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("PUT")
 }
-
-// Delete Wrap the router for DELETE method
 func (a *App) Delete(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("DELETE")
 }
 
-// GetAllBooks Handlers to manage Book Data
-func (a *App) GetAllBooks(w http.ResponseWriter, r *http.Request) {
-	handler.GetAllBooks(a.DB, w, r)
-}
 
+
+func (a *App) GetBooks(w http.ResponseWriter, r *http.Request) {
+	handler.GetBooks(a.DB, w, r)
+}
 func (a *App) CreateBook(w http.ResponseWriter, r *http.Request) {
 	handler.CreateBook(a.DB, w, r)
 }
-
 func (a *App) GetBook(w http.ResponseWriter, r *http.Request) {
 	handler.GetBook(a.DB, w, r)
 }
-
 func (a *App) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	handler.UpdateBook(a.DB, w, r)
 }
-
 func (a *App) DeleteBook(w http.ResponseWriter, r *http.Request) {
 	handler.DeleteBook(a.DB, w, r)
 }
 
-// Run the app on it's router
-func (a *App) Run(host string) {
-	log.Fatal(http.ListenAndServe(host, a.Router))
+
+func (a *App) GetAuthors(w http.ResponseWriter, r *http.Request) {
+	handler.GetAuthors(a.DB, w, r)
+}
+func (a *App) CreateAuthor(w http.ResponseWriter, r *http.Request) {
+	handler.CreateAuthor(a.DB, w, r)
+}
+func (a *App) GetAuthor(w http.ResponseWriter, r *http.Request) {
+	handler.GetAuthor(a.DB, w, r)
+}
+func (a *App) UpdateAuthor(w http.ResponseWriter, r *http.Request) {
+	handler.UpdateAuthor(a.DB, w, r)
+}
+func (a *App) DeleteAuthor(w http.ResponseWriter, r *http.Request) {
+	handler.DeleteAuthor(a.DB, w, r)
+}
+
+func (a *App) GetBooksByAuthor(w http.ResponseWriter, r *http.Request) {
+	handler.GetBooksByAuthor(a.DB, w, r)
+}
+func (a *App) GetBookByAuthor(w http.ResponseWriter, r *http.Request) {
+	handler.GetBookByAuthor(a.DB, w, r)
 }

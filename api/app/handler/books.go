@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
+	"strconv"
 	"github.com/diskordanz/Rest-Api/api/app/model"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
-//
+
 func GetFilterBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request, filterString string) {
 	name := fmt.Sprintf("%%%s%%", filterString)
 	var books []model.Book
@@ -19,10 +19,70 @@ func GetFilterBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request, filterS
 		return
 	}
 	respondJSON(w, http.StatusOK, books)
-
 }
 
-func GetAllBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func GetFilterBooksByAuthor(db *gorm.DB, w http.ResponseWriter, r *http.Request, filterString string, idAuthor int) {
+ 	name := fmt.Sprintf("%%%s%%", filterString)
+ 	var books []model.Book
+ 	if err := db.Where("name LIKE ? AND author_id = ?", name, idAuthor).Find(&books).Error; err != nil {
+ 		respondError(w, http.StatusNotFound, err.Error())
+ 		return
+ 	}
+ 	respondJSON(w, http.StatusOK, books)
+}
+
+func GetBookByAuthor(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var book model.Book
+
+	authorID, err := strconv.Atoi(params["id_author"])
+	if err != nil {
+		respondError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	bookID, err := strconv.Atoi(params["id_book"])
+	if err != nil {
+		respondError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := db.Where(&model.Book{ID: bookID, AuthorID: authorID}).First(&book).Error; err != nil {
+		respondError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	respondJSON(w, http.StatusOK, book)
+}
+
+func GetBooksByAuthor(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	v := r.URL.Query()
+	filterString := v.Get("name")
+	var books []model.Book
+	var author model.Author
+
+	authorID, err := strconv.Atoi(params["id_author"])
+	if err != nil {
+		respondError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := db.First(&author, authorID).Error; err != nil {
+		respondError(w, http.StatusNotFound, err.Error())
+		return
+	}
+
+	if filterString != "" {
+		GetFilterBooksByAuthor(db, w, r, filterString, authorID)
+		return
+	} else if err := db.Model(&author).Related(&books).Error; err != nil {
+		respondError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	respondJSON(w, http.StatusOK, books)
+}
+
+func GetBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	
 	v := r.URL.Query()
 	filterString := v.Get("name")
 	var books []model.Book
@@ -35,7 +95,6 @@ func GetAllBooks(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondJSON(w, http.StatusOK, books)
-
 }
 
 func GetBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -47,7 +106,6 @@ func GetBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondJSON(w, http.StatusOK, book)
-
 }
 
 func CreateBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
