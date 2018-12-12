@@ -26,9 +26,9 @@ func (db *GormDB) CreateAuthor(author *Author) error {
 	}
 	return nil
 }
-func (db *GormDB) GetFilterAuthors(filterString string) error{
+func (db *GormDB) GetFilterAuthors(filterString string) ([]Author, error){
 	var authors []Author
-	if err := db.Where("name LIKE ?", filterString).Find(&authors).Error; err != nil {
+	if err := db.DB.Where("name LIKE ?", filterString).Find(&authors).Error; err != nil {
 		return nil, err
 	}
 	return authors, nil

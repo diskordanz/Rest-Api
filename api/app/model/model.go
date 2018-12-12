@@ -14,7 +14,6 @@ type Book struct {
 type Author struct {
 	ID   int   	 `gorm:"primary_key" json:"id"`
 	Name string  `json:"name"`
-	Books []Book `json:"books"`
 }
 
 type GormDB struct {
@@ -36,8 +35,8 @@ type BookService interface {
 	CreateBook(book *Book) error
 	UpdateBook(book *Book) error
 	DeleteBook(book *Book) error
-	GetFilterBooks(filterString string) error
-	GetBooksByAuthor(books *Book) ([]Book, error)
+	GetFilterBooks(filterString string) ([]Book, error)
+	GetBooksByAuthor(author *Author) ([]Book, error)
 	GetFilterBooksByAuthor(idAuthor int, filterString string) ([]Book, error)
 
 }
@@ -48,7 +47,7 @@ type AuthorService interface {
 	CreateAuthor(author *Author) error
 	UpdateAuthor(author *Author) error
 	DeleteAuthor(author *Author) error
-	GetFilterAuthors(filterString string) error
+	GetFilterAuthors(filterString string) ([]Author, error)
 
 }
 

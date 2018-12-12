@@ -8,10 +8,9 @@ import (
 	"github.com/diskordanz/Rest-Api/api/app/model"
 
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 )
 
-func GetBooks(bookService BookService, w http.ResponseWriter, r *http.Request) {
+func GetBooks(bookService model.BookService, w http.ResponseWriter, r *http.Request) {
 	v := r.URL.Query()
 	filterString := v.Get("name")
 	var books []model.Book
@@ -30,9 +29,9 @@ func GetBooks(bookService BookService, w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, books)
 }
 
-func GetBook(bookService BookService, w http.ResponseWriter, r *http.Request) {
+func GetBook(bookService model.BookService, w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err.Error())
 		return
@@ -47,7 +46,7 @@ func GetBook(bookService BookService, w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, book)
 }
 
-func GetBooksByAuthor(bookService BookService, w http.ResponseWriter, r *http.Request) {
+func GetBooksByAuthor(bookService model.BookService, w http.ResponseWriter, r *http.Request) {
 	// params := mux.Vars(r)
 	// v := r.URL.Query()
 	// filterString := v.Get("name")
@@ -74,10 +73,12 @@ func GetBooksByAuthor(bookService BookService, w http.ResponseWriter, r *http.Re
 
 	v := r.URL.Query()
 	filterString := v.Get("name")
+	params := mux.Vars(r)
+
 	var books []model.Book
 	var err error
 
-	id, err := strconv.Atoi(vars["id"])
+	id, err := strconv.Atoi(params["id_author"])
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err.Error())
 		return
@@ -87,8 +88,8 @@ func GetBooksByAuthor(bookService BookService, w http.ResponseWriter, r *http.Re
 		name := fmt.Sprintf("%%%s%%", filterString)
 		books, err = bookService.GetFilterBooksByAuthor(id, name)
 	} else {
-		book := model.Book{ID:id}
-		books, err = bookService.GetBooksByAuthor(book)
+		author := model.Author{ID:id}
+		books, err = bookService.GetBooksByAuthor(&author)
 	}
 	 if err != nil {
 		respondError(w, http.StatusInternalServerError, err.Error())
@@ -97,9 +98,8 @@ func GetBooksByAuthor(bookService BookService, w http.ResponseWriter, r *http.Re
 	respondJSON(w, http.StatusOK, books)
 }
 
-func GetBookByAuthor(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func GetBookByAuthor(bookService model.BookService, w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var book model.Book
 
 	authorID, err := strconv.Atoi(params["id_author"])
 	if err != nil {
@@ -112,7 +112,7 @@ func GetBookByAuthor(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book := model.Book{ID:id, AuthorID:authorID}
+	book := model.Book{ID:bookID, AuthorID:authorID}
 
 	if err := bookService.GetBook(&book); err != nil {
 		respondError(w, http.StatusNotFound, err.Error())
@@ -122,9 +122,7 @@ func GetBookByAuthor(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, book)
 }
 
-
-////////////////
-func CreateBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func CreateBook(bookService model.BookService, w http.ResponseWriter, r *http.Request) {
 	var book model.Book
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&book); err != nil {
@@ -133,41 +131,45 @@ func CreateBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := db.Save(&book).Error; err != nil {
+	if err := bookService.CreateBook(&book); err != nil {
 		respondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondJSON(w, http.StatusCreated, book)
 }
 
-func UpdateBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func UpdateBook(bookService model.BookService, w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var book model.Book
-	if err := db.First(&book, params["id"]).Error; err != nil {
-		respondError(w, http.StatusNotFound, err.Error())
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		respondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	book := model.Book{ID:id}
+
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&book); err != nil {
 		respondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer r.Body.Close()
-	if err := db.Save(&book).Error; err != nil {
+	if err := bookService.UpdateBook(&book); err != nil {
 		respondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	respondJSON(w, http.StatusOK, book)
 }
 
-func DeleteBook(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func DeleteBook(bookService model.BookService, w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var book model.Book
-	if err := db.First(&book, params["id"]).Error; err != nil {
-		respondError(w, http.StatusNotFound, err.Error())
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		respondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	if err := db.Delete(&book, params["id"]).Error; err != nil {
+	book := model.Book{ID:id}
+
+	if err := bookService.DeleteBook(&book); err != nil {
 		respondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

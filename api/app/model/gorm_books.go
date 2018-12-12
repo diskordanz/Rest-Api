@@ -7,9 +7,9 @@ func (db *GormDB) GetBooks() ([]Book, error) {
 	}
 	return books, nil
 }
-func (db *GormDB) GetBooksByAuthor(books *Book) ([]Book, error) {
-
-	if err := db.DB.Find(&books).Error; err != nil {
+func (db *GormDB) GetBooksByAuthor(author *Author) ([]Book, error) {
+	var books []Book
+	if err := db.DB.Model(&author).Related(&books).Error; err != nil {
 		return nil, err
 	}
 	return books, nil
@@ -34,9 +34,9 @@ func (db *GormDB) CreateBook(book *Book) error {
 	return nil
 }
 
-func (db *GormDB) GetFilterBooks(filterString string) error{
+func (db *GormDB) GetFilterBooks(filterString string) ([]Book, error){
 	var books []Book
-	if err := db.Where("name LIKE ?", filterString).Find(&books).Error; err != nil {
+	if err := db.DB.Where("name LIKE ?", filterString).Find(&books).Error; err != nil {
 		return nil, err
 	}
 	return books, nil
@@ -44,7 +44,7 @@ func (db *GormDB) GetFilterBooks(filterString string) error{
 
 func (db *GormDB) GetFilterBooksByAuthor(idAuthor int, filterString string) ([]Book, error){
 	var books []Book
-	if err := db.Where("name LIKE ? AND author_id = ?", name, idAuthor).Find(&books).Error; err != nil {
+	if err := db.DB.Where("name LIKE ? AND author_id = ?", filterString, idAuthor).Find(&books).Error; err != nil {
 		return nil, err
 	}
 	return books, nil
